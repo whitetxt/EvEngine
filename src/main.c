@@ -10,6 +10,7 @@ size_t textArrSize = 0;
 struct Text *textArr = NULL;
 
 void render() {
+	// Main render function. renders the player, all the tiles and all text
 	SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
 	SDL_RenderClear(renderer);
 	if (MainPlayer.isCrouching)
@@ -26,9 +27,13 @@ void render() {
 }
 
 void calculateFPS() {
+	/* 	Calculates how long a frame took to do the game loop
+		and works out an approx framerate from that */
 	int CurrentTime = SDL_GetTicks();
 	dt = CurrentTime - PrevTime;
+	// dt is used in other functions to allow physics to be framerate-independent
 	if (dt != 0) {
+		// Before I turned vsync on, dt was sometimes 0, therefore crashing when divide by 0.
 		float EstFPS = 1000 / dt;
 		PrevTime = CurrentTime;
 		printf("FPS: %f - %dms taken.\n", EstFPS, dt);
@@ -48,16 +53,22 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	// Create the player
 	MainPlayer = createPlayer("Player.png", "PlayerCrouch.png", 0, 0, 0.4, 0.15);
 
+	// Load the first map
 	loadMap("1.map");
 
+	// Resize the text array and create new text.
 	textArr = realloc(textArr, ++textArrSize * sizeof(*textArr));
 	textArr[0] = createText("Hello, this is a test", 200, 200);
 
+	// Main event loop.
 	while (1) {
+		// EventHandling returns 1 when it wants to quit the game.
 		if (eventHandling(&MainPlayer) == 1)
 			break;
+		// All of these require passing the player through to allow for potential multiplayer.
 		grav(&MainPlayer);
 		playerCollision(&MainPlayer);
 		render();
@@ -66,6 +77,12 @@ int main(int argc, char *argv[]) {
 
 	printf("Closing.\n");
 
+	// Destroys all the textures
+	for (size_t x = 0; x < mapSize; x++) {
+		SDL_DestroyTexture(map[x].tex);
+	}
+
+	// Destroy the window.
 	SDL_DestroyWindow(win);
 	SDL_Quit();
 	return 0; 

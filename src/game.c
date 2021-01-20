@@ -2,8 +2,8 @@
 
 SDL_Window *win;
 SDL_Renderer *renderer;
-int height = 768;
-int width = 768;
+int height = 700;
+int width = 700;
 
 int initWindow() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) { 
@@ -16,10 +16,12 @@ int initWindow() {
 		return 1;
 	}
 
-	Uint32 winFlags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALLOW_HIGHDPI;
+	// Sets the flags for the window: Allows the window to be resized and allows it to be used on a high DPI screen.
+	Uint32 winFlags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
 
-	win = SDL_CreateWindow("Unfedora", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, height, width, winFlags);
+	win = SDL_CreateWindow("EvEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, height, width, winFlags);
 
+	// Checks if the window was created successfully.
 	if (win == NULL) {
 		printf("SDL had an error creating the window: %s\n", SDL_GetError());
 		SDL_Quit();
@@ -28,10 +30,12 @@ int initWindow() {
 	
 	printf("Initialised Window.\n");
 
+	// Sets the flags for the renderer: Turns on vsync and uses hardware acceleration.
 	Uint32 rendFlags = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
 	
 	renderer = SDL_CreateRenderer(win, -1, rendFlags);
 
+	// Checks if the renderer was created successfully.
 	if (renderer == NULL) {
 		printf("SDL had an error creating the renderer: %s\n", SDL_GetError());
 		SDL_DestroyWindow(win);
