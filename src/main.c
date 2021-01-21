@@ -6,23 +6,22 @@ int PrevTime = 0;
 int MaxFPS = 120;
 int dt = 0;
 
-size_t textArrSize = 0;
-struct Text *textArr = NULL;
+SDL_Texture **loadedTextures;
+size_t textureSize;
+
+struct Tile currentTile;
 
 void render() {
 	// Main render function. renders the player, all the tiles and all text
 	SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
 	SDL_RenderClear(renderer);
-	if (MainPlayer.isCrouching)
-		SDL_RenderCopy(renderer, MainPlayer.crouchTex, NULL, &MainPlayer.rect);
-	else
-		SDL_RenderCopy(renderer, MainPlayer.tex, NULL, &MainPlayer.rect);
-	for (size_t x = 0; x < mapSize; x++)
-		SDL_RenderCopy(renderer, map[x].tex, NULL, &map[x].rect);
 
-	for (size_t x = 0; x < textArrSize; x++) 
-		SDL_RenderCopy(renderer, textArr[x].tex, NULL, &textArr[x].rect);
+	for (size_t x = 0; x < mapSize; x++) {
+		SDL_RenderCopy(renderer, map[x].tex, NULL, &map[x].rect);
+	}
 	
+	SDL_RenderCopy(renderer, currentTile.tex, NULL, &currentTile.rect);
+
 	SDL_RenderPresent(renderer);
 }
 
@@ -53,26 +52,20 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	// Create the player
-	MainPlayer = createPlayer("Player.png", "PlayerCrouch.png", 0, 0, 0.4, 0.15);
+	loadMap("out.map");
 
-	// Load the first map
-	loadMap("1.map");
-
-	// Resize the text array and create new text.
-	textArr = realloc(textArr, ++textArrSize * sizeof(*textArr));
-	textArr[0] = createText("Hello, this is a test", 200, 200);
+	// Create the first tile
+	currentTile = createTile("ground.png", 0, 0);
+	printf("Created tile.\n");
 
 	// Main event loop.
 	while (1) {
 		// EventHandling returns 1 when it wants to quit the game.
-		if (eventHandling(&MainPlayer) == 1)
+		if (eventHandling() == 1)
 			break;
 		// All of these require passing the player through to allow for potential multiplayer.
-		grav(&MainPlayer);
-		playerCollision(&MainPlayer);
 		render();
-		calculateFPS();
+		//calculateFPS();
 	}
 
 	printf("Closing.\n");

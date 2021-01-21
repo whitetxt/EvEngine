@@ -1,29 +1,10 @@
 #include "main.h"
 
 SDL_Event event;
+bool grid = true;
+bool held = true;
 
-int eventHandling(struct Player *Player) {
-	// Using SDL_GetKeyboardState because that allows for held characters easily. SDL_KEYDOWN event does not work like this.
-	const Uint8 *keys = SDL_GetKeyboardState(NULL);
-
-	// Handling movement
-	if (keys[SDL_SCANCODE_W]) 
-		playerJump(Player);
-	
-	if (keys[SDL_SCANCODE_A]) 
-		movePlayer(Player, 3);
-	
-	if (keys[SDL_SCANCODE_S]) {
-		if (!Player->isCrouching)
-			startCrouch(Player);
-	} else {
-		if (Player->isCrouching)
-			endCrouch(Player);
-	}
-	
-	if (keys[SDL_SCANCODE_D])
-		movePlayer(Player, 1);
-
+int eventHandling() {
 	// Polling events
 	SDL_PollEvent(&event);
 
@@ -39,9 +20,65 @@ int eventHandling(struct Player *Player) {
 					return 1;
 				case SDLK_ESCAPE:
 					return 1;
+				case SDLK_RETURN:
+					printf("Saving map.\n");
+					saveMap("out.map");
+					printf("Saved map to 'out.map'\n");
+					break;
+				case SDLK_g:
+					grid = !grid;
+					break;
+				case SDLK_d:
+					worldScrollX = worldScrollX + 70;
+					for (size_t x = 0; x < mapSize; x++) {
+						map[x].rect.x = map[x].worldRect.x - worldScrollX;
+					}
+					break;
+				case SDLK_a:
+					worldScrollX = worldScrollX - 70;
+					for (size_t x = 0; x < mapSize; x++) {
+						map[x].rect.x = map[x].worldRect.x - worldScrollX;
+					}
+					break;
+				case SDLK_w:
+					worldScrollY = worldScrollY - 70;
+					for (size_t x = 0; x < mapSize; x++) {
+						map[x].rect.y = map[x].worldRect.y - worldScrollY;
+					}
+					break;
+				case SDLK_s:
+					worldScrollY = worldScrollY + 70;
+					for (size_t x = 0; x < mapSize; x++) {
+						map[x].rect.y = map[x].worldRect.y - worldScrollY;
+					}
+					break;
 				default:
 					break;
 			}
+			break;
+		
+		case SDL_MOUSEMOTION:
+			currentTile.rect.x = event.motion.x;
+			currentTile.rect.y = event.motion.y;
+			if (grid) {
+				currentTile.rect.x = currentTile.rect.x - (currentTile.rect.x % 70);
+				currentTile.rect.y = currentTile.rect.y - (currentTile.rect.y % 70);
+			}
+			currentTile.worldRect.x = currentTile.rect.x + worldScrollX;
+			currentTile.worldRect.y = currentTile.rect.y + worldScrollX;
+			break;
+		
+		case SDL_MOUSEBUTTONDOWN:
+			if (!held) {
+				map = realloc(map, ++mapSize * sizeof(*map));
+				printf("%I64d\n", mapSize);
+				map[mapSize - 1] = createTile("ground.png", currentTile.rect.x, currentTile.rect.y);
+				held = true;
+			}
+			break;
+		
+		case SDL_MOUSEBUTTONUP:
+			held = false;
 			break;
 		
 		// Allows for the window to be resized, and to still function correctly; although resizing isnt recommended.

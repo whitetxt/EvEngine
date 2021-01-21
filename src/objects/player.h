@@ -9,6 +9,9 @@ struct Player {
 	float crouchSpeed;
 };
 
+extern int worldScrollX;
+extern int worldScrollY;
+
 struct Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, float crouchSpeed);
 
 void movePlayer(struct Player *Player, int dir);

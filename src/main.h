@@ -11,12 +11,13 @@
 #include "objects/player.h"
 #include "events.h"
 #include "objects/maps.h"
-#include "text.h"
 
 extern TTF_Font *Font;
 extern SDL_Color Black;
 
-extern size_t textArrSize;
-extern struct Text *textArr;
+extern SDL_Texture **loadedTextures;
+extern size_t textureSize;
+
+extern struct Tile currentTile;
 
 extern int dt;

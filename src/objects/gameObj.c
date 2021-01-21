@@ -39,3 +39,10 @@ struct Tile createTile(char *fp, int x, int y) {
 	struct Tile tmpTile = almostCreateTile(tmpTex, tmpRect);
 	return tmpTile;
 }
+
+struct Tile createTileFromTexture(SDL_Texture *tmpTex, int x, int y) {
+	// Function to create a Tile from an already loaded texture.
+	SDL_Rect tmpRect = createRect(tmpTex, x, y);
+	struct Tile tmpTile = almostCreateTile(tmpTex, tmpRect);
+	return tmpTile;
+}

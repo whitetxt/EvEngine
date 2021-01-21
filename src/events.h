@@ -1,1 +1,1 @@
-int eventHandling(struct Player *Player);
+int eventHandling();

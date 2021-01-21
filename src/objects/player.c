@@ -2,7 +2,8 @@
 
 double PrevGrav = 0;
 int BaseGrav = 0;
-int worldScroll = 0;
+int worldScrollX = 0;
+int worldScrollY = 0;
 
 struct Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, float crouchSpeed) {
 	struct Player tmpPlayer;
@@ -55,26 +56,26 @@ void movePlayer(struct Player *Player, int dir) {
 	// If the player is at the center and moving to the right:
 	if (Player->rect.x + (Player->rect.w / 2) > width / 2 && dir == 1) {
 		// Change the world scroll.
-		worldScroll = worldScroll + (Player->isCrouching ? Player->crouchSpeed * dt : Player->normSpeed * dt);
+		worldScrollX = worldScrollX + (Player->isCrouching ? Player->crouchSpeed * dt : Player->normSpeed * dt);
 		// Lock the player at the center.
 		Player->rect.x = (width / 2) - (Player->rect.w / 2);
 		// Change the positions of all the tiles.
 		for (size_t x = 0; x < mapSize; x++) {
-			map[x].rect.x = map[x].worldRect.x - worldScroll;
+			map[x].rect.x = map[x].worldRect.x - worldScrollX;
 		}
 	}
 	// If the player is at the center, not at the left edge and moving to the left:
-	if (worldScroll != 0 && Player->rect.x + (Player->rect.w / 2) < width / 2 && dir == 3) {
+	if (worldScrollX != 0 && Player->rect.x + (Player->rect.w / 2) < width / 2 && dir == 3) {
 		// Change the world scroll.
-		worldScroll = worldScroll - (Player->isCrouching ? Player->crouchSpeed * dt : Player->normSpeed * dt);
+		worldScrollX = worldScrollX - (Player->isCrouching ? Player->crouchSpeed * dt : Player->normSpeed * dt);
 		// Lock the world scroll at the left edge.
-		if (worldScroll < 0)
-			worldScroll = 0;
+		if (worldScrollX < 0)
+			worldScrollX = 0;
 		// Lock the player at the center.
 		Player->rect.x = (width / 2) - (Player->rect.w / 2);
 		// Update positions of all the tiles.
 		for (size_t x = 0; x < mapSize; x++) {
-			map[x].rect.x = map[x].worldRect.x - worldScroll;
+			map[x].rect.x = map[x].worldRect.x - worldScrollX;
 		}
 	}
 }
