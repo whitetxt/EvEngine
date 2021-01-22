@@ -2,7 +2,9 @@
 
 SDL_Event event;
 bool grid = true;
-bool held = true;
+bool heldMouse = false;
+bool heldLeft = false;
+bool heldRight = false;
 
 int eventHandling() {
 	// Polling events
@@ -33,24 +35,62 @@ int eventHandling() {
 					for (size_t x = 0; x < mapSize; x++) {
 						map[x].rect.x = map[x].worldRect.x - worldScrollX;
 					}
+					currentTile.worldRect.x = currentTile.rect.x + worldScrollX;
+					currentTile.worldRect.y = currentTile.rect.y + worldScrollY;
 					break;
 				case SDLK_a:
 					worldScrollX = worldScrollX - 70;
 					for (size_t x = 0; x < mapSize; x++) {
 						map[x].rect.x = map[x].worldRect.x - worldScrollX;
 					}
+					currentTile.worldRect.x = currentTile.rect.x + worldScrollX;
+					currentTile.worldRect.y = currentTile.rect.y + worldScrollY;
 					break;
 				case SDLK_w:
 					worldScrollY = worldScrollY - 70;
 					for (size_t x = 0; x < mapSize; x++) {
 						map[x].rect.y = map[x].worldRect.y - worldScrollY;
 					}
+					currentTile.worldRect.x = currentTile.rect.x + worldScrollX;
+					currentTile.worldRect.y = currentTile.rect.y + worldScrollY;
 					break;
 				case SDLK_s:
 					worldScrollY = worldScrollY + 70;
 					for (size_t x = 0; x < mapSize; x++) {
 						map[x].rect.y = map[x].worldRect.y - worldScrollY;
 					}
+					currentTile.worldRect.x = currentTile.rect.x + worldScrollX;
+					currentTile.worldRect.y = currentTile.rect.y + worldScrollY;
+					break;
+				case SDLK_RIGHT:
+					if (!heldRight) {
+						heldRight = true;
+						selectedTexture++;
+						if (selectedTexture >= textureSize)
+							selectedTexture = 0;
+						currentTile.tex = loadedTextures[selectedTexture];
+					}
+					break;
+				case SDLK_LEFT:
+					if (!heldLeft) {
+						heldLeft = true;
+						if (selectedTexture == 0)
+							selectedTexture = textureSize;
+						selectedTexture -= 1;
+						currentTile.tex = loadedTextures[selectedTexture];
+					}
+				default:
+					break;
+			}
+			break;
+		
+		case SDL_KEYUP:
+			switch (event.key.keysym.sym) {
+				case SDLK_RIGHT:
+					heldRight = false;
+					break;
+				case SDLK_LEFT:
+					heldLeft = false;
 					break;
 				default:
 					break;
@@ -65,20 +105,43 @@ int eventHandling() {
 				currentTile.rect.y = currentTile.rect.y - (currentTile.rect.y % 70);
 			}
 			currentTile.worldRect.x = currentTile.rect.x + worldScrollX;
-			currentTile.worldRect.y = currentTile.rect.y + worldScrollX;
+			currentTile.worldRect.y = currentTile.rect.y + worldScrollY;
 			break;
 		
 		case SDL_MOUSEBUTTONDOWN:
-			if (!held) {
-				map = realloc(map, ++mapSize * sizeof(*map));
-				printf("%I64d\n", mapSize);
-				map[mapSize - 1] = createTile("ground.png", currentTile.rect.x, currentTile.rect.y);
-				held = true;
+			if (!heldMouse) {
+				if (event.button.button == SDL_BUTTON_LEFT) {
+					map = realloc(map, ++mapSize * sizeof(*map));
+					printf("%I64d\n", mapSize);
+					map[mapSize - 1] = createTileFromTexture(loadedTextures[selectedTexture], currentTile.worldRect.x, currentTile.worldRect.y);
+					printf("created tile\n");
+					heldMouse = true;
+					for (size_t x = 0; x < mapSize; x++) {
+						map[x].rect.x = map[x].worldRect.x - worldScrollX;
+					}
+					for (size_t x = 0; x < mapSize; x++) {
+						map[x].rect.y = map[x].worldRect.y - worldScrollY;
+					}
+				} else if (event.button.button == SDL_BUTTON_RIGHT) {
+					SDL_Rect mouseRect;
+					mouseRect.x = currentTile.rect.x;
+					mouseRect.y = currentTile.rect.y;
+					mouseRect.w = 5;
+					mouseRect.h = 5;
+					SDL_Rect returnRect;
+					for (size_t x = 0; x < mapSize; x++) {
+						if (SDL_IntersectRect(&mouseRect, &map[x].rect, &returnRect)) {
+							for(size_t i = x; i < mapSize - 1; i++)
+								map[i] = map[i + 1];
+							mapSize -= 1;
+						}
+					}
+				}
 			}
 			break;
 		
 		case SDL_MOUSEBUTTONUP:
-			held = false;
+			heldMouse = false;
 			break;
 		
 		// Allows for the window to be resized, and to still function correctly; although resizing isnt recommended.

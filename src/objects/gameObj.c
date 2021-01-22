@@ -29,6 +29,7 @@ struct Tile almostCreateTile(SDL_Texture *tex, SDL_Rect rect) {
 	tmpTile.tex = tex;
 	tmpTile.rect = rect;
 	tmpTile.worldRect = rect;
+	tmpTile.texIndex = selectedTexture;
 	return tmpTile;
 }
 

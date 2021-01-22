@@ -2,6 +2,7 @@ struct Tile {
 	SDL_Texture *tex;
 	SDL_Rect rect;
 	SDL_Rect worldRect;
+	uint64_t texIndex;
 };
 
 struct TileSerialisation {

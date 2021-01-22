@@ -8,6 +8,7 @@ int dt = 0;
 
 SDL_Texture **loadedTextures;
 size_t textureSize;
+size_t selectedTexture = 0;
 
 struct Tile currentTile;
 
@@ -52,10 +53,13 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	loadTextures();
+
 	loadMap("out.map");
 
 	// Create the first tile
-	currentTile = createTile("ground.png", 0, 0);
+	selectedTexture = 0;
+	currentTile = createTileFromTexture(loadedTextures[selectedTexture], 0, 0);
 	printf("Created tile.\n");
 
 	// Main event loop.
