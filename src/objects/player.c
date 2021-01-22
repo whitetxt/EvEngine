@@ -2,7 +2,7 @@
 
 double PrevGrav = 0;
 int BaseGrav = 0;
-int worldScroll = 0;
+int worldScrollX = 0;
 
 struct Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, float crouchSpeed) {
 	struct Player tmpPlayer;
@@ -53,28 +53,31 @@ void movePlayer(struct Player *Player, int dir) {
 		}
 	}
 	// If the player is at the center and moving to the right:
-	if (Player->rect.x + (Player->rect.w / 2) > width / 2 && dir == 1) {
+	if (Player->rect.x + (Player->rect.w / 2) > width / 2 && dir == 1 && m.maxScrollX > worldScrollX + width) {
 		// Change the world scroll.
-		worldScroll = worldScroll + (Player->isCrouching ? Player->crouchSpeed * dt : Player->normSpeed * dt);
+		worldScrollX = worldScrollX + (Player->isCrouching ? Player->crouchSpeed * dt : Player->normSpeed * dt);
+		// Prevent worldScrollX from exceeding bounds.
+		if (worldScrollX > m.maxScrollX)
+			worldScrollX = m.maxScrollX;
 		// Lock the player at the center.
 		Player->rect.x = (width / 2) - (Player->rect.w / 2);
 		// Change the positions of all the tiles.
 		for (size_t x = 0; x < mapSize; x++) {
-			map[x].rect.x = map[x].worldRect.x - worldScroll;
+			map[x].rect.x = map[x].worldRect.x - worldScrollX;
 		}
 	}
 	// If the player is at the center, not at the left edge and moving to the left:
-	if (worldScroll != 0 && Player->rect.x + (Player->rect.w / 2) < width / 2 && dir == 3) {
+	if (worldScrollX != 0 && Player->rect.x + (Player->rect.w / 2) < width / 2 && dir == 3) {
 		// Change the world scroll.
-		worldScroll = worldScroll - (Player->isCrouching ? Player->crouchSpeed * dt : Player->normSpeed * dt);
+		worldScrollX = worldScrollX - (Player->isCrouching ? Player->crouchSpeed * dt : Player->normSpeed * dt);
 		// Lock the world scroll at the left edge.
-		if (worldScroll < 0)
-			worldScroll = 0;
+		if (worldScrollX < 0)
+			worldScrollX = 0;
 		// Lock the player at the center.
 		Player->rect.x = (width / 2) - (Player->rect.w / 2);
 		// Update positions of all the tiles.
 		for (size_t x = 0; x < mapSize; x++) {
-			map[x].rect.x = map[x].worldRect.x - worldScroll;
+			map[x].rect.x = map[x].worldRect.x - worldScrollX;
 		}
 	}
 }
@@ -106,13 +109,6 @@ void grav(struct Player *Player) {
 	// Function to apply accelerating gravity.
 	PrevGrav += 0.01 * dt;
 	Player->rect.y += PrevGrav;
-	// If the player is below the window.
-	// TODO: Make this respawn the player.
-	if (Player->rect.y + Player->rect.h > height) {
-		Player->rect.y = height - Player->rect.h;
-		PrevGrav = 0;
-		Player->onGround = true;
-	}
 }
 
 void playerJump(struct Player *Player) {
@@ -174,9 +170,15 @@ void playerCollision(struct Player *Player) {
 	// Takes a struct Player to allow for multiple player checking.
 
 	// If the player is too low down, clamp at the bottom.
-	// TODO: Make this respawn the player
-	if (Player->rect.y + Player->rect.h > height)
-		Player->rect.y = height - Player->rect.h;
+	if (Player->rect.y + Player->rect.h > height) {
+		worldScrollX = 0;
+		Player->rect.x = 0;
+		Player->rect.y = 0;
+		for (size_t x = 0; x < mapSize; x++) {
+			map[x].rect.x = map[x].worldRect.x - worldScrollX;
+		}
+		PrevGrav = 0;
+	}
 
 	// If too far left, clamp at the left side.
 	if (Player->rect.x < 0)

@@ -16,6 +16,9 @@
 extern TTF_Font *Font;
 extern SDL_Color Black;
 
+extern SDL_Texture **loadedTextures;
+extern size_t textureSize;
+
 extern size_t textArrSize;
 extern struct Text *textArr;
 

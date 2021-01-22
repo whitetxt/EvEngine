@@ -6,6 +6,9 @@ int PrevTime = 0;
 int MaxFPS = 120;
 int dt = 0;
 
+SDL_Texture **loadedTextures;
+size_t textureSize;
+
 size_t textArrSize = 0;
 struct Text *textArr = NULL;
 
@@ -57,7 +60,8 @@ int main(int argc, char *argv[]) {
 	MainPlayer = createPlayer("Player.png", "PlayerCrouch.png", 0, 0, 0.4, 0.15);
 
 	// Load the first map
-	loadMap("1.map");
+	loadTextures("out.textures");
+	loadMap("out.map");
 
 	// Resize the text array and create new text.
 	textArr = realloc(textArr, ++textArrSize * sizeof(*textArr));

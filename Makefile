@@ -9,12 +9,10 @@ OBJS := $(SRCS:.c=.o)
 EXEC := EvEngine.exe
 
 all: $(EXEC)
-	 cp $(EXEC) /mnt/hgfs/Ubuntu_20.04/$(EXEC)
+	 cp $(EXEC) /mnt/hgfs/Ubuntu_20.04/EvEngine/$(EXEC)
 
 $(EXEC): $(OBJS) $(HDRS) Makefile
 	$(CC) -o $@ $(OBJS) $(CFLAGS)
 
 clean:
 	rm -f $(EXEC) $(OBJS)
-
-
