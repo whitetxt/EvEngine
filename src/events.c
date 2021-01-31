@@ -1,8 +1,11 @@
 #include "main.h"
 
 SDL_Event event;
+bool spaceHeld = false;
+struct Player *Player;
 
-int eventHandling(struct Player *Player) {
+int eventHandling(struct Player *Pl) {
+	Player = Pl;
 	// Using SDL_GetKeyboardState because that allows for held characters easily. SDL_KEYDOWN event does not work like this.
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
@@ -10,8 +13,10 @@ int eventHandling(struct Player *Player) {
 	if (keys[SDL_SCANCODE_W]) 
 		playerJump(Player);
 	
-	if (keys[SDL_SCANCODE_A]) 
+	if (keys[SDL_SCANCODE_A]) {
 		movePlayer(Player, 3);
+		//printf("Left\n");
+	}
 	
 	if (keys[SDL_SCANCODE_S]) {
 		if (!Player->isCrouching)
@@ -21,8 +26,10 @@ int eventHandling(struct Player *Player) {
 			endCrouch(Player);
 	}
 	
-	if (keys[SDL_SCANCODE_D])
+	if (keys[SDL_SCANCODE_D]) {
 		movePlayer(Player, 1);
+		//printf("Right\n");
+	}
 
 	// Polling events
 	SDL_PollEvent(&event);
@@ -39,7 +46,21 @@ int eventHandling(struct Player *Player) {
 					return 1;
 				case SDLK_ESCAPE:
 					return 1;
+				case SDLK_SPACE:
+					if (!spaceHeld) {
+						//interactables(Player);
+						spaceHeld = true;
+					}
+					break;
 				default:
+					break;
+			}
+			break;
+		
+		case SDL_KEYUP:
+			switch (event.key.keysym.sym) {
+				case SDLK_SPACE:
+					spaceHeld = false;
 					break;
 			}
 			break;

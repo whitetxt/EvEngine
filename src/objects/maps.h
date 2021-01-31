@@ -1,11 +1,15 @@
-struct MapHeader {
+struct Map {
 	uint8_t MapName[32];
 	uint64_t maxScrollX;
-	uint64_t maxScrollY;
 	uint64_t nTexturePaths;
+	uint64_t nInteractablePaths;
 	uint64_t nTiles;
+	uint64_t nInteractables;
 	char **TexturePaths;
+	char **InteractableActivePaths;
+	char **InteractableInactivePaths;
 	struct TileSerialisation *Tiles;
+	struct TileSerialisation *Interactables;
 };
 
 void loadMap(char *path);
@@ -13,4 +17,4 @@ void loadTextures(char *path);
 
 extern size_t mapSize;
 extern struct Tile *map;
-extern struct MapHeader m;
+extern struct Map m;

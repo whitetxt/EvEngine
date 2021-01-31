@@ -18,3 +18,5 @@ struct Tile almostCreateTile(SDL_Texture *tex, SDL_Rect rect);
 struct Tile createTile(char *fp, int x, int y);
 
 struct Tile createTileFromTexture(SDL_Texture *tmpTex, int x, int y);
+
+//void interactables(struct Player *Player);

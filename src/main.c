@@ -9,6 +9,10 @@ int dt = 0;
 SDL_Texture **loadedTextures;
 size_t textureSize;
 
+SDL_Texture **loadedInteractablesActive;
+SDL_Texture **loadedInteractablesInactive;
+size_t interactableSize;
+
 size_t textArrSize = 0;
 struct Text *textArr = NULL;
 
@@ -29,16 +33,19 @@ void render() {
 	SDL_RenderPresent(renderer);
 }
 
-void calculateFPS() {
-	/* 	Calculates how long a frame took to do the game loop
-		and works out an approx framerate from that */
+void calculateDT() {
+	// Calculates the deltatime (Time to perform all actions and render.)
 	int CurrentTime = SDL_GetTicks();
 	dt = CurrentTime - PrevTime;
+	PrevTime = CurrentTime;
 	// dt is used in other functions to allow physics to be framerate-independent
+}
+
+void calculateFPS() {
+	// Calculates the FPS from deltatime.
 	if (dt != 0) {
 		// Before I turned vsync on, dt was sometimes 0, therefore crashing when divide by 0.
 		float EstFPS = 1000 / dt;
-		PrevTime = CurrentTime;
 		printf("FPS: %f - %dms taken.\n", EstFPS, dt);
 	} else {
 		printf("FPS: INF - 0ms taken.\n");
@@ -57,10 +64,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Create the player
-	MainPlayer = createPlayer("Player.png", "PlayerCrouch.png", 0, 0, 0.4, 0.15);
+	MainPlayer = createPlayer("Player.png", "PlayerCrouch.png", 0, 0, 0.1, 0.0375);
 
 	// Load the first map
-	loadTextures("out.textures");
 	loadMap("out.map");
 
 	// Resize the text array and create new text.
@@ -76,7 +82,8 @@ int main(int argc, char *argv[]) {
 		grav(&MainPlayer);
 		playerCollision(&MainPlayer);
 		render();
-		calculateFPS();
+		calculateDT();
+		//calculateFPS();
 	}
 
 	printf("Closing.\n");

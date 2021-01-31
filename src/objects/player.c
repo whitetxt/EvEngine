@@ -3,6 +3,7 @@
 double PrevGrav = 0;
 int BaseGrav = 0;
 int worldScrollX = 0;
+double PlayerAccel = 0;
 
 struct Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, float crouchSpeed) {
 	struct Player tmpPlayer;
@@ -23,32 +24,20 @@ void movePlayer(struct Player *Player, int dir) {
 	// Change player speed if crouching.
 	if (Player->isCrouching) {
 		switch (dir) {
-			case 0:
-				Player->rect.y -= Player->crouchSpeed * dt;
-				break;
 			case 1:
-				Player->rect.x += Player->crouchSpeed * dt;
-				break;
-			case 2:
-				Player->rect.y += Player->crouchSpeed * dt;
+				PlayerAccel += Player->crouchSpeed * dt;
 				break;
 			case 3:
-				Player->rect.x -= Player->crouchSpeed * dt;
+				PlayerAccel -= Player->crouchSpeed * dt;
 				break;
 		}
 	} else {
 		switch (dir) {
-			case 0:
-				Player->rect.y -= Player->normSpeed * dt;
-				break;
 			case 1:
-				Player->rect.x += Player->normSpeed * dt;
-				break;
-			case 2:
-				Player->rect.y += Player->normSpeed * dt;
+				PlayerAccel += Player->normSpeed * dt;
 				break;
 			case 3:
-				Player->rect.x -= Player->normSpeed * dt;
+				PlayerAccel-= Player->normSpeed * dt;
 				break;
 		}
 	}
@@ -107,14 +96,19 @@ void endCrouch(struct Player *Player) {
 
 void grav(struct Player *Player) {
 	// Function to apply accelerating gravity.
-	PrevGrav += 0.01 * dt;
-	Player->rect.y += PrevGrav;
+	PrevGrav += 0.01;
+	Player->rect.y += (int) (PrevGrav * dt);
+	PlayerAccel *= 0.85;
+	if (fabs(PlayerAccel) < 0.1)
+		PlayerAccel = 0;
+	printf("PlayerAccel: %f\n", PlayerAccel);
+	Player->rect.x += PlayerAccel;
 }
 
 void playerJump(struct Player *Player) {
 	// Simple function that uses gravity to make the player jump.
 	if (Player->onGround) {
-		PrevGrav = -4;
+		PrevGrav = -0.5;
 		Player->onGround = false;
 	}
 }
@@ -207,6 +201,7 @@ void playerCollision(struct Player *Player) {
 			Player->rect.x < map[x].rect.x + map[x].rect.w &&
 			Player->rect.y + Player->rect.h > map[x].rect.y &&
 			Player->rect.y < map[x].rect.y + map[x].rect.h) {
+			//printf("Collision\n");
 			// Figure out collision side
 			int amtRight = abs(Player->rect.x + Player->rect.w - map[x].rect.x);
 			int amtLeft = abs(map[x].rect.x + map[x].rect.w - Player->rect.x);
@@ -223,18 +218,21 @@ void playerCollision(struct Player *Player) {
 			}
 
 			// Handle collision side accordingly.
-			if (lowest == amtRight)
+			if (lowest == amtRight) {
 				Player->rect.x = map[x].rect.x - Player->rect.w - 0.05;
-			else if (lowest == amtLeft)
+				//printf("Collision Right\n");
+			} else if (lowest == amtLeft) {
 				Player->rect.x = map[x].rect.x + map[x].rect.w + 0.05;
-			else if (lowest == amtTop) {
+				//printf("Collision Left\n");
+			} else if (lowest == amtTop) {
 				Player->rect.y = map[x].rect.y + map[x].rect.h + 0.05;
 				PrevGrav = 0;
-			}
-			else if (lowest == amtBottom) {
+				//printf("Collision Top\n");
+			} else if (lowest == amtBottom) {
 				Player->rect.y = map[x].rect.y - Player->rect.h - 0.05;
 				Player->onGround = true;
 				PrevGrav = 0;
+				//printf("Collision Bottom\n");
 			}
 		}
 	}

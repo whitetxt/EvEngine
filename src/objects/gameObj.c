@@ -46,3 +46,7 @@ struct Tile createTileFromTexture(SDL_Texture *tmpTex, int x, int y) {
 	struct Tile tmpTile = almostCreateTile(tmpTex, tmpRect);
 	return tmpTile;
 }
+
+/*void interactables(struct Player *Player) {
+	return;
+}*/
