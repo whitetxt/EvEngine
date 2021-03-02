@@ -1,15 +1,27 @@
-CC := x86_64-w64-mingw32-gcc
+CC = gcc
 
-CFLAGS := -g -Wall -Wextra -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -I/home/evelyn/C/GCC/include -L/home/evelyn/C/GCC/lib
+CFLAGS = -g -Wall -Wextra -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lws2_32 -I../GCC/include -L../GCC/lib
 
-SRCS := src/main.c src/objects/gameObj.c src/game.c src/events.c src/objects/player.c src/objects/maps.c src/text.c
+SRCS = src/main.c src/objects/gameObj.c src/game.c src/events.c src/objects/player.c src/objects/maps.c src/menu/text.c src/settings.c src/client.c ../GCC/include/ini.c src/menu/menu.c src/notif.c src/menu/mainMenu.c src/pvp/pvp.c
 
-OBJS := $(SRCS:.c=.o)
+OBJS = $(SRCS:.c=.o)
 
-EXEC := EvEngine.exe
+SERVSRC = server/main.c
+
+SERVOBJ = $(SERVSRC:.c=.o)
+
+EXEC = EvEngine.exe
+
+SERV = EvEngineServer.exe
 
 all: $(EXEC)
-	 cp $(EXEC) /mnt/hgfs/Ubuntu_20.04/EvEngine/$(EXEC)
+
+server: $(SERV)
+
+new: clean $(EXEC)
+
+$(SERV): $(SERVOBJ) $(HDRS) Makefile
+	$(CC) -o $@ $(SERVOBJ) $(CFLAGS)
 
 $(EXEC): $(OBJS) $(HDRS) Makefile
 	$(CC) -o $@ $(OBJS) $(CFLAGS)

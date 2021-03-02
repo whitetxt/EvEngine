@@ -7,7 +7,10 @@ struct Player {
 	bool isCrouching;
 	float normSpeed;
 	float crouchSpeed;
+	int dir;
 };
+
+extern int64_t worldScrollX;
 
 struct Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, float crouchSpeed);
 
