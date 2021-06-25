@@ -1,0 +1,8 @@
+NOT_UNPAUSABLE
+TITLE:Level Select
+Level 1:LoadLevel:levels/level1.map
+Level 2:LoadLevel:levels/level2.map
+Level 3:LoadLevel:levels/level3.map
+Level 4:LoadLevel:levels/level4.map
+Level 5:LoadLevel:levels/level5.map
+Back:MenuBack
