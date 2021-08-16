@@ -21,7 +21,7 @@
 
 extern SDL_Texture *playerTexture;
 extern SDL_Texture *playerTextureCrouch;
-extern struct Player MainPlayer;
+extern Player MainPlayer;
 extern struct OtherPlayer *players;
 extern size_t numPlayers;
 extern bool paused;

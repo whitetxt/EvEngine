@@ -5,6 +5,8 @@ SDL_Renderer *renderer;
 int width;
 int height;
 
+// Initialises SDL, SDL_TTF and creates a window and renderer.
+// @return 0 on success, 1 on failure.
 int initWindow() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) { 
 		printf("Error initializing SDL: %s\n", SDL_GetError());

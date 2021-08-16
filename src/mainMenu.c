@@ -7,6 +7,8 @@ SDL_Event mainMenuEv;
 
 double frame = 0;
 
+// Main function to create the main menu
+// @return -1 for quit, 0 for starting the game.
 int mainMenu() {
 	createMainMenu();
 	while (1) {
@@ -21,6 +23,7 @@ int mainMenu() {
 	}
 }
 
+// Renders the main menu
 void renderMainMenu() {
 	// Special function for rendering the menu.
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -34,6 +37,7 @@ void renderMainMenu() {
 	SDL_RenderPresent(renderer);
 }
 
+// Creates the main menu
 void createMainMenu() {
 	// Create text, could have made it read from a text file but thats too much effort.
 	bottomText = createColouredText("Press any key to continue", width / 2, height - 40, menuFont, Black);
@@ -42,6 +46,8 @@ void createMainMenu() {
 	mainTitle.rect.x = width / 2 - (mainTitle.rect.w / 2);
 }
 
+// Main menu event handler
+// @return 0 for no event, 1 for quit, 2 for start game.
 int mainMenuEventHandling() {
 	// Polling events
 	SDL_PollEvent(&mainMenuEv);
@@ -58,6 +64,7 @@ int mainMenuEventHandling() {
 	return 0;
 }
 
+// Destroys the main menu
 void destroyMainMenu() {
 	// Cleanup
 	SDL_DestroyTexture(bottomText.tex);

@@ -5,6 +5,8 @@ zed_net_address_t server;
 zed_net_socket_t Sock;
 char *lastSent = "A";
 
+// Sets up the multiplayer client.
+// @return 0 on success, -1 on failure.
 int setupClient() {
 	if (zed_net_init() != 0) {
 		printf("Error initialising zed_net: %s\n", zed_net_get_error());
@@ -44,6 +46,9 @@ int setupClient() {
 	return 0;
 }
 
+// Sends a message to the server.
+// @param msg The message to send.
+// @return 0 on success, -1 on failure.
 int sendMsg(char *msg) {
 	if (zed_net_udp_socket_send(&Sock, server, msg, strlen(msg)) != 0) { // Check it sent correctly
 		printf("Send failed: %s\n", zed_net_get_error());
@@ -52,6 +57,7 @@ int sendMsg(char *msg) {
 	return 0;
 }
 
+// Sends the player's position to the server.
 void sendPos() {
 	char toSend[256];
 	sprintf(toSend, "MV:%lld:%d", MainPlayer.rect.x + worldScrollX, MainPlayer.rect.y);
@@ -62,6 +68,7 @@ void sendPos() {
 	lastSent = strdup(toSend);
 }
 
+// Performs the routine to connect to the server.
 void connectToServer() {
 	char JoinMsg[32];
 	if (strlen(Settings.name) > 29) {
@@ -105,6 +112,8 @@ void connectToServer() {
 	return;
 }
 
+// Gets updates from the server.
+// @return 0 on success, -1 on failure.
 int getUpdates() {
 	while (1) {
 		char playerdata[256];
@@ -187,6 +196,7 @@ int getUpdates() {
 	}
 }
 
+// Updates the positions and names of other players
 void updateMultiplayerNames() {
 	// Updates the positions and names of other players
 	textArrSize = numPlayers;
@@ -198,11 +208,14 @@ void updateMultiplayerNames() {
 	}
 }
 
+// Sends the stay-alive packet to the server.
+// @return 0 on success, -1 on failure.
 int stayAlive() {
-	while (1) {
+	while (playing) {
 		SDL_Delay(10000); // Wait 10 seconds
 		if (sendMsg("PING") != 0) { // If the ping fails (presumably the socket is closed)
-			return 0;
+			return 1;
 		}
 	}
+	return 0;
 }

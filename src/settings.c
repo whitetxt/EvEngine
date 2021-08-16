@@ -29,6 +29,8 @@ static int handler(void* user, const char* section, const char* name, const char
 	return 1;
 }
 
+// Loads settings from "settings.ini"
+// @return 0 on success, 1 on failure
 int loadSettings() {
 	if (ini_parse("settings.ini", handler, &Settings) < 0) {
 		printf("Can't load 'settings.ini'\n");

@@ -8,6 +8,9 @@ struct Map m;
 size_t interactableMapSize = 0;
 struct Interactable *interactableMap = NULL;
 
+// Loads a map from a file
+// @param path The path to the map file.
+// @return 0 on success, 1 on failure.
 int loadMap(char *path) {
 	// Function to load a map from a file.
 

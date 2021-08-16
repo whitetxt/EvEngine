@@ -6,31 +6,31 @@ bool escHeld = false;
 bool downHeld = false;
 bool upHeld = false;
 bool unpausable = false;
-struct Player *Player;
+Player *player;
 
-int eventHandling(struct Player *Pl) {
-	Player = Pl;
+int eventHandling(Player *Pl) {
+	player = Pl;
 	// Using SDL_GetKeyboardState because that allows for held characters easily. SDL_KEYDOWN event does not work like this.
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 
 	// Handling movement
 	if (keys[SDL_SCANCODE_W]) 
-		playerJump(Player);
+		playerJump(player);
 	
 	if (keys[SDL_SCANCODE_A]) {
-		movePlayer(Player, 3);
+		movePlayer(player, 3);
 	}
 	
 	if (keys[SDL_SCANCODE_S]) {
-		if (!Player->isCrouching)
-			startCrouch(Player);
+		if (!player->isCrouching)
+			startCrouch(player);
 	} else {
-		if (Player->isCrouching)
-			endCrouch(Player);
+		if (player->isCrouching)
+			endCrouch(player);
 	}
 	
 	if (keys[SDL_SCANCODE_D]) {
-		movePlayer(Player, 1);
+		movePlayer(player, 1);
 	}
 
 	// Polling events
@@ -55,7 +55,7 @@ int eventHandling(struct Player *Pl) {
 						break;
 					case SDLK_SPACE:
 						if (!spaceHeld) {
-							interactables(Player);
+							interactables(player);
 							spaceHeld = true;
 						}
 						break;

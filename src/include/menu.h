@@ -7,6 +7,13 @@ typedef struct MenuItem {
 	bool textInput;
 } MenuItem;
 
+typedef struct Menu {
+	char *name;
+	MenuItem *items;
+	size_t numItems;
+	int selected;
+} Menu;
+
 extern size_t selectedMenu;
 extern size_t menuSize;
 extern size_t inputNum;

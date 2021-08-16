@@ -5,8 +5,16 @@ int BaseGrav = 0;
 int64_t worldScrollX = 0;
 double PlayerAccel = 0;
 
-struct Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, float crouchSpeed) {
-	struct Player tmpPlayer;
+// Creates a player object
+// @param fp The path to the image to use for the player
+// @param crouchfp The path to the image to use for the player when crouching
+// @param x The x position of the player
+// @param y The y position of the player
+// @param normSpeed The normal speed of the player
+// @param crouchSpeed The speed of the player when crouching
+// @return The newly created player object
+Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, float crouchSpeed) {
+	Player tmpPlayer;
 	tmpPlayer.tex = loadImage(renderer, fp);
 	tmpPlayer.crouchTex = loadImage(renderer, crouchfp);
 	tmpPlayer.rect = createRect(tmpPlayer.tex, x, y);
@@ -16,7 +24,11 @@ struct Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpe
 	return tmpPlayer;
 }
 
-void movePlayer(struct Player *Player, int dir) {
+// Handles player movement
+// @param Player The player to move
+// @param dir The direction to move in (1 = E, 3 = W)
+
+void movePlayer(Player *Player, int dir) {
 	// Function to move the player around. Also handles scrolling.
 	/* 	0 = N
 	1 = E
@@ -38,7 +50,10 @@ void movePlayer(struct Player *Player, int dir) {
 	}
 }
 
-void startCrouch(struct Player *Player) {
+// Starts crouch mode.
+// @param Player: The player to start crouch mode on.
+
+void startCrouch(Player *Player) {
 	Player->rect.h = 35;
 	Player->isCrouching = true;
 	Player->rect.y += 35;
@@ -46,7 +61,10 @@ void startCrouch(struct Player *Player) {
 		sendMsg("SCR");
 }
 
-void endCrouch(struct Player *Player) {
+// Ends crouch mode.
+// @param Player: The player to end crouch mode on.
+
+void endCrouch(Player *Player) {
 	Player->rect.h = 70;
 	Player->rect.y -= 35;
 	// Checks if player would get clipped inside a block if we uncrouched.
@@ -65,7 +83,10 @@ void endCrouch(struct Player *Player) {
 		sendMsg("ECR");
 }
 
-void grav(struct Player *Player) {
+// Applies gravity to a player.
+// @param Player The player to apply gravity to.
+
+void grav(Player *Player) {
 	// Function to apply accelerating gravity.
 	PrevGrav += 12 * dt;
 	Player->rect.y += PrevGrav;
@@ -73,6 +94,13 @@ void grav(struct Player *Player) {
 	if (PlayerAccel < 0.05 && PlayerAccel > -0.1)
 		PlayerAccel = 0;
 	Player->rect.x = Player->rect.x + PlayerAccel * dt;
+	
+}
+
+// Updates world scroll
+// @param Player The player to center for world scroll.
+
+void updateWorldScroll(Player *Player) {
 	// If the player is at the center and moving to the right:
 	if (Player->rect.x + (Player->rect.w / 2) > width / 2 && m.maxScrollX > worldScrollX + width) {
 		// Change the world scroll.
@@ -109,7 +137,10 @@ void grav(struct Player *Player) {
 	}
 }
 
-void playerJump(struct Player *Player) {
+// Makes a player jump.
+// @param Player The player to make jump.
+
+void playerJump(Player *Player) {
 	// Simple function that uses gravity to make the player jump.
 	if (Player->onGround) {
 		PrevGrav = -4;
@@ -117,9 +148,10 @@ void playerJump(struct Player *Player) {
 	}
 }
 
+// Handles collision for an SDL_Rect.
+// @param Rect the SDL_Rect to handle collisions for.
+// @return true if collision occurred, false otherwise.
 bool checkCollision(SDL_Rect Rect) {
-	// Collision function for SDL_Rects.
-	// Identical to playerCollision except it takes an SDL_Rect not a struct Player.
 	for (size_t x = 0; x < mapSize; x++) {
 
 		// If the tile is too far away, dont waste time checking.
@@ -163,10 +195,10 @@ bool checkCollision(SDL_Rect Rect) {
 	return false;
 }
 
-void playerCollision(struct Player *Player) {
-	// Function to handle player collision with tiles.
-	// Takes a struct Player to allow for multiple player checking.
+// Handles collision for a player.
+// @param Player The player to handle collisions for.
 
+void playerCollision(Player *Player) {
 	// If the player is too low down, clamp at the bottom.
 	if (Player->rect.y + Player->rect.h > height) {
 		worldScrollX = 0;
@@ -245,13 +277,11 @@ void playerCollision(struct Player *Player) {
 }
 
 // Renders a player.
-// @param Player *player - The player to render.
-// @return void
-void renderPlayer(struct Player *Player) {
-	/* Renders a player.
-	*/
+// @param Player The player to render.
 
-	if (Player->isCrouching)
-		SDL_RenderCopy(renderer, Player->crouchTex, NULL, &Player->rect);
+void renderPlayer(Player *player) {
+	if (player->isCrouching)
+		SDL_RenderCopy(renderer, player->crouchTex, NULL, &player->rect);
 	else
-		SDL_RenderCopy(renderer, Player->tex, NULL, &Player->rect);
+		SDL_RenderCopy(renderer, player->tex, NULL, &player->rect);
+}

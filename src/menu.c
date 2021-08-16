@@ -19,6 +19,9 @@ char finalText[512];
 bool pressed = false;
 char *lastKey = "¬";
 
+// Creates a new menu from a file
+// @param path The path to the menu file
+// @return 0 on success, 1 on failure
 int createMenu(char *path) {
 	// Open a menu file by path
 	char outpath[256];
@@ -83,6 +86,7 @@ int createMenu(char *path) {
 	return 0;
 }
 
+// Renders the menu
 void renderMenu() {
 	// Special function for rendering the menu.
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -141,6 +145,8 @@ void renderMenu() {
 	return;
 }
 
+// Selects the option
+// @return 0 to do nothing, 1 to quit the game, 2 to connect to a server.
 int selectOption() {
 	// Get the menu to go to or whatever else is in that field.
 	char *menuToGo = menu[selectedMenu].nextmenu;
@@ -173,6 +179,7 @@ int selectOption() {
 	return 0;
 }
 
+// Menu event handler
 void menuInputHandling() {
 	// Special event handling to handle key inputs
 	switch (event.type) {

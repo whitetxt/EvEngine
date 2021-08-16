@@ -64,7 +64,7 @@ struct Interactable createInteractableFromTextures(int texIndex, int x, int y, u
 	return toReturn;
 }
 
-void interactables(struct Player *Player) {
+void interactables(Player *Player) {
 	SDL_Rect Rect = Player->rect;
 	// Collision function for interactables.
 	for (size_t x = 0; x < interactableMapSize; x++) {

@@ -3,7 +3,7 @@
 #include "include/main.h"
 
 SDL_Color White = {255, 255, 255, 255};
-struct Player MainPlayer;
+Player MainPlayer;
 int PrevTime = 0;
 int MaxFPS = 120;
 bool paused = false;
@@ -31,8 +31,8 @@ void render() {
 	// Main render function. renders the player, all the tiles and all text
 	SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
 	SDL_RenderClear(renderer);
-	
-	
+	renderPlayer(&MainPlayer);
+
 	for (size_t x = 0; x < mapSize; x++)
 		if (map[x].rect.x < width)
 			SDL_RenderCopy(renderer, map[x].tex, NULL, &map[x].rect);
@@ -95,7 +95,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	initFonts();
-	initNotifs();
 	SDL_StartTextInput();
 
 	// Create the player
@@ -122,6 +121,7 @@ int main(int argc, char *argv[]) {
 			// All of these require passing the player through to allow for potential multiplayer.
 			grav(&MainPlayer);
 			playerCollision(&MainPlayer);
+			updateWorldScroll(&MainPlayer);
 			if (onServer) { // If multiplayer
 				sendPos();
 				updateMultiplayerNames();

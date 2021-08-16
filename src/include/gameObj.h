@@ -43,4 +43,4 @@ struct Tile createTileFromTexture(SDL_Texture *tmpTex, int x, int y);
 
 struct Interactable createInteractableFromTextures(int texIndex, int x, int y, uint8_t active);
 
-void interactables(struct Player *Player);
+void interactables(Player *Player);

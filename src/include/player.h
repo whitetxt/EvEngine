@@ -14,15 +14,18 @@ extern int64_t worldScrollX;
 
 struct Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, float crouchSpeed);
 
-void movePlayer(struct Player *Player, int dir);
+void movePlayer(Player *Player, int dir);
 
-void grav(struct Player *Player);
+void grav(Player *Player);
 
-void playerJump(struct Player *Player);
+void playerJump(Player *Player);
 
 bool checkCollision(SDL_Rect Rect);
 
-void playerCollision(struct Player *Player);
+void playerCollision(Player *Player);
+void updateWorldScroll(Player *Player);
 
-void startCrouch(struct Player *Player);
-void endCrouch(struct Player *Player);
+void startCrouch(Player *Player);
+void endCrouch(Player *Player);
+
+void renderPlayer(Player *Player);

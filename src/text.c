@@ -14,7 +14,13 @@ void initFonts() {
 	mainMenuFont = TTF_OpenFont("fonts/aller.ttf", Settings.mainMenuSize);
 }
 
-struct Text createText(char *text, int x, int y, TTF_Font *Font) {
+// Creates a text object for the given text, font and position.
+// @param text The text to be displayed.
+// @param x The x position of the text.
+// @param y The y position of the text.
+// @param Font The font to be used.
+// @return The text object.
+Text createText(char *text, int x, int y, TTF_Font *Font) {
 	// Creates the colour, loads the font and creates the text surface.
 	SDL_Color Colour = {255, 255, 255, 255};
 	SDL_Surface *TextSurface = TTF_RenderText_Blended(Font, text, Colour);
@@ -48,7 +54,14 @@ struct Text createText(char *text, int x, int y, TTF_Font *Font) {
 	return tmpText;
 }
 
-struct Text createColouredText(char *text, int x, int y, TTF_Font *Font, SDL_Color Colour) {
+// Creates a text object for the given text, font, colour and position.
+// @param text The text to be displayed.
+// @param x The x position of the text.
+// @param y The y position of the text.
+// @param Font The font to be used.
+// @param Colour The colour to be used.
+// @return The text object.
+Text createColouredText(char *text, int x, int y, TTF_Font *Font, SDL_Color Colour) {
 	// Loads the font and creates the text surface.
 	SDL_Surface *TextSurface = TTF_RenderText_Blended(Font, text, Colour);
 	// Checks if the surface was created correctly.
@@ -82,6 +95,8 @@ struct Text createColouredText(char *text, int x, int y, TTF_Font *Font, SDL_Col
 	return tmpText;
 }
 
+// Frees a text object.
+// @param Text The text object to be freed.
 void freeText(struct Text text) {
 	SDL_DestroyTexture(text.tex);
 	return;
