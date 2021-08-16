@@ -9,17 +9,16 @@
 #include <stdint.h>
 #include <math.h>
 #include "game.h"
-#include "objects/player.h"
-#include "objects/gameObj.h"
+#include "player.h"
+#include "gameObj.h"
 #include "events.h"
-#include "objects/maps.h"
-#include "menu/text.h"
+#include "maps.h"
+#include "text.h"
 #include "settings.h"
 #include "client.h"
-#include "menu/menu.h"
+#include "menu.h"
 #include "notif.h"
-#include "menu/mainMenu.h"
-#include "pvp/pvp.h"
+#include "mainMenu.h"
 
 extern SDL_Texture *playerTexture;
 extern SDL_Texture *playerTextureCrouch;

@@ -1,4 +1,4 @@
-#include "main.h"
+#include "include/main.h"
 #include <zed_net.h>
 
 zed_net_address_t server;
@@ -65,7 +65,7 @@ void sendPos() {
 void connectToServer() {
 	char JoinMsg[32];
 	if (strlen(Settings.name) > 29) {
-		warn("Username is too long. Max 29 chars.");
+		printf("Username is too long. Max 29 chars.");
 		return;
 	}
 	sprintf(JoinMsg, "JN:%s", Settings.name);

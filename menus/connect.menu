@@ -1,6 +1,0 @@
-NOT_UNPAUSABLE
-TITLE:Multiplayer Connection
-IP:TextInput
-Port:TextInput
-Connect:ServerConnect,0,1
-Back:MenuBack

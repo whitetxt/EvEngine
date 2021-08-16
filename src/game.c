@@ -1,4 +1,4 @@
-#include "main.h"
+#include "include/main.h"
 
 SDL_Window *win;
 SDL_Renderer *renderer;

@@ -1,4 +1,4 @@
-#include "../main.h"
+#include "include/main.h"
 
 double PrevGrav = 0;
 int BaseGrav = 0;
@@ -89,9 +89,6 @@ void grav(struct Player *Player) {
 		for (size_t x = 0; x < numPlayers; x++) {
 			players[x].rect.x = players[x].worldRect.x - worldScrollX;
 		}
-		for (size_t x = 0; x < numBullets; x++) {
-			bullets[x].rect.x = bullets[x].worldRect.x - worldScrollX;
-		}
 	}
 	// If the player is at the center, not at the left edge and moving to the left:
 	if (worldScrollX != 0 && Player->rect.x + (Player->rect.w / 2) < width / 2) {
@@ -108,9 +105,6 @@ void grav(struct Player *Player) {
 		}
 		for (size_t x = 0; x < numPlayers; x++) {
 			players[x].rect.x = players[x].worldRect.x - worldScrollX;
-		}
-		for (size_t x = 0; x < numBullets; x++) {
-			bullets[x].rect.x = bullets[x].worldRect.x - worldScrollX;
 		}
 	}
 }

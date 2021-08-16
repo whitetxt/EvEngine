@@ -1,6 +1,6 @@
 #define ZED_NET_IMPLEMENTATION
 #include <zed_net.h>
-#include "main.h"
+#include "include/main.h"
 
 SDL_Color White = {255, 255, 255, 255};
 struct Player MainPlayer;
@@ -129,7 +129,6 @@ int main(int argc, char *argv[]) {
 				sendPos();
 				updateMultiplayerNames();
 			}
-			applyBulletGrav();
 			render();
 		} else {
 			int retVal = pauseEventHandling();
@@ -164,7 +163,6 @@ int main(int argc, char *argv[]) {
 			renderMenu();
 		}
 		renderNotifs();
-		renderBullets();
 		SDL_RenderPresent(renderer);
 		calculateDT();
 		//calculateFPS();

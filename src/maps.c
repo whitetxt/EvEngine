@@ -1,4 +1,4 @@
-#include "../main.h"
+#include "include/main.h"
 
 size_t mapSize = 0;
 

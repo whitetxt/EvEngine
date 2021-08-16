@@ -1,4 +1,4 @@
-#include "../main.h"
+#include "include/main.h"
 
 TTF_Font *menuFont;
 TTF_Font *playerFont;

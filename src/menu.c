@@ -1,4 +1,4 @@
-#include "../main.h"
+#include "include/main.h"
 
 size_t selectedMenu = 0;
 size_t menuSize = 0;

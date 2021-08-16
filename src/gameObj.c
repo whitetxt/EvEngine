@@ -1,4 +1,4 @@
-#include "../main.h"
+#include "include/main.h"
 
 SDL_Rect createRect(SDL_Texture *tex, int x, int y) {
 	// Function to create a SDL_Rect from a texture and position.

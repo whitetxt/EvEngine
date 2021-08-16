@@ -1,4 +1,4 @@
-#include "main.h"
+#include "include/main.h"
 
 SDL_Event event;
 bool spaceHeld = false;
@@ -81,14 +81,6 @@ int eventHandling(struct Player *Pl) {
 					case SDL_WINDOWEVENT_RESIZED:
 						width = event.window.data1;
 						height = event.window.data2;
-						break;
-				}
-				break;
-
-			case SDL_MOUSEBUTTONDOWN:
-				switch (event.button.button) {
-					case SDL_BUTTON_LEFT:
-						shoot(Player, event.button.x, event.button.y);
 						break;
 				}
 				break;
