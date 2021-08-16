@@ -75,6 +75,12 @@ int createMenu(char *path) {
 			tmpItem.textInput = true;
 			tmpItem.text = '\0';
 			tmpItem.textBuf[0] = '\0';
+		} 
+		if (strcmp(menu->menuTitle.nextmenu, "Settings") == 0) {
+			if (strcmp(tmpItem.name, "Multiplayer Name") == 0) {
+				tmpItem.text = strdup(Settings.name);
+				strcat(tmpItem.textBuf, Settings.name);
+			}
 		}
 		tmpItem.unselected = createColouredText(tmpItem.name, 20, ((Settings.menuSize + 8) * menu->numItems) + (menu->menuTitle.selected.rect.h + 25), menuFont, Black);
 		tmpItem.selected = createColouredText(tmpItem.name, 20, ((Settings.menuSize + 8) * menu->numItems) + (menu->menuTitle.selected.rect.h + 25), menuFont, Selected);
