@@ -1,4 +1,4 @@
-struct Player {
+typedef struct Player {
 	SDL_Texture *tex;
 	SDL_Texture *crouchTex;
 	SDL_Rect rect;
@@ -8,7 +8,7 @@ struct Player {
 	float normSpeed;
 	float crouchSpeed;
 	int dir;
-};
+} Player;
 
 extern int64_t worldScrollX;
 

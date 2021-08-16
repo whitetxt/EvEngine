@@ -1,4 +1,4 @@
-struct Map {
+typedef struct Map {
 	uint8_t MapName[32];
 	int64_t maxScrollX;
 	uint64_t nTexturePaths;
@@ -10,7 +10,7 @@ struct Map {
 	char **InteractableInactivePaths;
 	struct TileSerialisation *Tiles;
 	struct InteractableSerialisation *Interactables;
-};
+} Map;
 
 int loadMap(char *path);
 void loadTextures(char *path);

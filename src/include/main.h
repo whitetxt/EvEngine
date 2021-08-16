@@ -17,7 +17,6 @@
 #include "settings.h"
 #include "client.h"
 #include "menu.h"
-#include "notif.h"
 #include "mainMenu.h"
 
 extern SDL_Texture *playerTexture;

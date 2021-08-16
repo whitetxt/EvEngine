@@ -31,10 +31,7 @@ void render() {
 	// Main render function. renders the player, all the tiles and all text
 	SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
 	SDL_RenderClear(renderer);
-	if (MainPlayer.isCrouching)
-		SDL_RenderCopy(renderer, MainPlayer.crouchTex, NULL, &MainPlayer.rect);
-	else
-		SDL_RenderCopy(renderer, MainPlayer.tex, NULL, &MainPlayer.rect);
+	
 	
 	for (size_t x = 0; x < mapSize; x++)
 		if (map[x].rect.x < width)
@@ -162,7 +159,6 @@ int main(int argc, char *argv[]) {
 			}
 			renderMenu();
 		}
-		renderNotifs();
 		SDL_RenderPresent(renderer);
 		calculateDT();
 		//calculateFPS();

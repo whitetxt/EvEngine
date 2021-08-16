@@ -1,35 +1,35 @@
-struct Tile {
+typedef struct Tile {
 	SDL_Texture *tex;
 	SDL_Rect rect;
 	SDL_Rect worldRect;
-};
+} Tile;
 
-struct TileSerialisation {
+typedef struct TileSerialisation {
 	uint64_t texIndex;
 	uint32_t x, y;
-};
+} TileSerialisation;
 
-struct Interactable {
+typedef struct Interactable {
 	SDL_Texture *activeTex;
 	SDL_Texture *inactiveTex;
 	SDL_Rect rect;
 	SDL_Rect worldRect;
 	bool active;
-};
+} Interactable;
 
-struct InteractableSerialisation {
+typedef struct InteractableSerialisation {
 	uint64_t texIndex;
 	uint32_t x, y;
 	uint8_t active;
-};
+} InteractableSerialisation;
 
-struct OtherPlayer {
+typedef struct OtherPlayer {
 	char *ID;
 	char *name;
 	bool crouching;
 	SDL_Rect rect;
 	SDL_Rect worldRect;
-};
+} OtherPlayer;
 
 SDL_Rect createRect(SDL_Texture *tex, int x, int y);
 

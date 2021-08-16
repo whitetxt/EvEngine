@@ -1,5 +1,4 @@
-typedef struct
-{
+typedef struct configuration {
 	const char* name;
 	int playerTextSize;
 	int width;

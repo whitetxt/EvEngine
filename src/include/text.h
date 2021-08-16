@@ -1,7 +1,7 @@
-struct Text {
+typedef struct Text {
 	SDL_Rect rect;
 	SDL_Texture *tex;
-};
+} Text;
 
 extern TTF_Font *menuFont;
 extern TTF_Font *playerFont;

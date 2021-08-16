@@ -1,11 +1,11 @@
-struct MenuItem {
+typedef struct MenuItem {
 	char *name;
 	char *nextmenu;
 	char *levelName;
 	char *text;
 	char textBuf[512];
 	bool textInput;
-};
+} MenuItem;
 
 extern size_t selectedMenu;
 extern size_t menuSize;

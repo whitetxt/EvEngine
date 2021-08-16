@@ -243,3 +243,15 @@ void playerCollision(struct Player *Player) {
 		}
 	}
 }
+
+// Renders a player.
+// @param Player *player - The player to render.
+// @return void
+void renderPlayer(struct Player *Player) {
+	/* Renders a player.
+	*/
+
+	if (Player->isCrouching)
+		SDL_RenderCopy(renderer, Player->crouchTex, NULL, &Player->rect);
+	else
+		SDL_RenderCopy(renderer, Player->tex, NULL, &Player->rect);
