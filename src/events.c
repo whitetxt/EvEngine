@@ -81,6 +81,8 @@ int eventHandling(Player *Pl) {
 					case SDL_WINDOWEVENT_RESIZED:
 						width = event.window.data1;
 						height = event.window.data2;
+						Settings.width = width;
+						Settings.height = height;
 						break;
 				}
 				break;
@@ -167,6 +169,8 @@ int pauseEventHandling() {
 					case SDL_WINDOWEVENT_RESIZED:
 						width = event.window.data1;
 						height = event.window.data2;
+						Settings.width = width;
+						Settings.height = height;
 						break;
 				}
 				break;
