@@ -5,6 +5,7 @@ typedef struct MenuItem {
 	char *text;
 	char textBuf[512];
 	bool textInput;
+	Text textObj;
 } MenuItem;
 
 typedef struct Menu {
