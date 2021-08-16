@@ -47,6 +47,40 @@ struct Tile createTileFromTexture(SDL_Texture *tmpTex, int x, int y) {
 	return tmpTile;
 }
 
-/*void interactables(struct Player *Player) {
-	return;
-}*/
+struct Interactable createInteractableFromTextures(int texIndex, int x, int y, uint8_t active) {
+	SDL_Rect activeRect = createRect(loadedInteractablesActive[texIndex], x, y);
+	SDL_Rect inactiveRect = createRect(loadedInteractablesInactive[texIndex], x, y);
+	struct Interactable toReturn;
+	toReturn.activeTex = loadedInteractablesActive[texIndex];
+	toReturn.inactiveTex = loadedInteractablesInactive[texIndex];
+	if (active == 1) {
+		toReturn.rect = activeRect;
+		toReturn.active = true;
+	} else {
+		toReturn.rect = inactiveRect;
+		toReturn.active = false;
+	}
+	toReturn.worldRect = toReturn.rect;
+	return toReturn;
+}
+
+void interactables(struct Player *Player) {
+	SDL_Rect Rect = Player->rect;
+	// Collision function for interactables.
+	for (size_t x = 0; x < interactableMapSize; x++) {
+
+		// If the tile is too far away, dont waste time checking.
+		if (abs(Rect.x - interactableMap[x].rect.x) > 100)
+			continue;
+		if (abs(Rect.y - interactableMap[x].rect.y) > 100)
+			continue;
+
+		// First, check if there is a collision.
+		if(	Rect.x + Rect.w > interactableMap[x].rect.x &&
+			Rect.x < interactableMap[x].rect.x + interactableMap[x].rect.w &&
+			Rect.y + Rect.h > interactableMap[x].rect.y &&
+			Rect.y < interactableMap[x].rect.y + interactableMap[x].rect.h) {
+			interactableMap[x].active = !interactableMap[x].active;
+		}
+	}
+}

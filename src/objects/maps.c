@@ -6,16 +6,16 @@ struct Tile *map = NULL;
 struct Map m;
 
 size_t interactableMapSize = 0;
-struct Tile *interactableMap = NULL;
+struct Interactable *interactableMap = NULL;
 
-void loadMap(char *path) {
+int loadMap(char *path) {
 	// Function to load a map from a file.
 
 	FILE *fp = fopen(path, "rb");
 
 	if (!fp) {
 		printf("Unable to open file to read map.\n");
-		return;
+		return 1;
 	}
 
 	fread(&m.MapName, sizeof(m.MapName), 1, fp);
@@ -38,7 +38,7 @@ void loadMap(char *path) {
 			tmpTexture = SDL_CreateTextureFromSurface(renderer, tmpsurf);
 			SDL_FreeSurface(tmpsurf);
 		}
-		loadedTextures = realloc(loadedTextures, ++textureSize * sizeof(loadedTextures));
+		loadedTextures = realloc(loadedTextures, ++textureSize * sizeof(*loadedTextures));
 		loadedTextures[textureSize - 1] = tmpTexture;
 	}
 
@@ -53,11 +53,11 @@ void loadMap(char *path) {
 			tmpTexture = SDL_CreateTextureFromSurface(renderer, tmpsurf);
 			SDL_FreeSurface(tmpsurf);
 		}
-		loadedInteractablesInactive = realloc(loadedInteractablesInactive, ++interactableSize * sizeof(loadedInteractablesInactive));
+		loadedInteractablesInactive = realloc(loadedInteractablesInactive, ++interactableSize * sizeof(*loadedInteractablesInactive));
 		loadedInteractablesInactive[interactableSize - 1] = tmpTexture;
 	}
 
-	loadedInteractablesActive = realloc(loadedInteractablesActive, interactableSize * sizeof(loadedInteractablesActive));
+	loadedInteractablesActive = realloc(loadedInteractablesActive, interactableSize * sizeof*(loadedInteractablesActive));
 	for (size_t i = 0; i < m.nInteractablePaths; i++) {
 		fgets(buf, BUFSIZE, fp);
 		buf[strcspn(buf, "\r\n")] = 0;
@@ -79,16 +79,20 @@ void loadMap(char *path) {
 		map = realloc(map, ++mapSize * sizeof(*map));
 		map[mapSize - 1] = createTileFromTexture(loadedTextures[m.Tiles[i].texIndex], m.Tiles[i].x, m.Tiles[i].y);
 	}
+	free(m.Tiles);
 	m.Interactables = malloc(m.nInteractables * sizeof(*m.Interactables));
 	for (size_t i = 0; i < m.nInteractables; i++) {
 		fread(&m.Interactables[i].texIndex, sizeof(m.Interactables[i].texIndex), 1, fp);
 		fread(&m.Interactables[i].x, sizeof(m.Interactables[i].x), 1, fp);
 		fread(&m.Interactables[i].y, sizeof(m.Interactables[i].y), 1, fp);
+		fread(&m.Interactables[i].active, sizeof(m.Interactables[i].active), 1, fp);
 		interactableMap = realloc(interactableMap, ++interactableMapSize * sizeof(*interactableMap));
-		interactableMap[interactableMapSize - 1] = createTileFromTexture(loadedInteractablesInactive[m.Interactables[i].texIndex], m.Interactables[i].x, m.Interactables[i].y);
+		interactableMap[interactableMapSize - 1] = createInteractableFromTextures(m.Interactables[i].texIndex, m.Interactables[i].x, m.Interactables[i].y, m.Interactables[i].active);
 	}
+	free(m.Interactables);
 
 	printf("'%s' loaded.\n", m.MapName);
 	// Close the file
 	fclose(fp);
+	return 0;
 }

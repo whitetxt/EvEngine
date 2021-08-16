@@ -2,8 +2,8 @@
 
 SDL_Window *win;
 SDL_Renderer *renderer;
-int height = 700;
-int width = 700;
+int width;
+int height;
 
 int initWindow() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) { 
@@ -19,7 +19,9 @@ int initWindow() {
 	// Sets the flags for the window: Allows the window to be resized and allows it to be used on a high DPI screen.
 	Uint32 winFlags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
 
-	win = SDL_CreateWindow("EvEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, height, width, winFlags);
+	win = SDL_CreateWindow("EvEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Settings.width, Settings.height, winFlags);
+	width = Settings.width;
+	height = Settings.height;
 
 	// Checks if the window was created successfully.
 	if (win == NULL) {
