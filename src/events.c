@@ -121,19 +121,19 @@ int pauseEventHandling() {
 						break;
 					case SDLK_DOWN:
 						if (!downHeld) {
-							selectedMenu++;
-							if (selectedMenu >= menuSize) {
-								selectedMenu = 0;
+							menu->selected++;
+							if (menu->selected >= menu->numItems) {
+								menu->selected = 0;
 							}
 							downHeld = true;
 						}
 						break;
 					case SDLK_UP:
 						if (!upHeld) {
-							if (selectedMenu == 0) {
-								selectedMenu = menuSize;
+							if (menu->selected == 0) {
+								menu->selected = menu->numItems;
 							}
-							selectedMenu--;
+							menu->selected--;
 							upHeld = true;
 						}
 						break;

@@ -178,6 +178,11 @@ int main(int argc, char *argv[]) {
 		zed_net_shutdown();
 	}
 
+	printf("Saving settings.\n");
+	if (saveSettings() != 0) {
+		printf("Failed to save settings. All changes will be lost.\nSorry.");
+	}
+
 	printf("Closing.\n");
 
 	// Destroys all the textures

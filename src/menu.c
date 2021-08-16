@@ -1,11 +1,8 @@
 #include "include/main.h"
 
-size_t selectedMenu = 0;
-size_t menuSize = 0;
 size_t inputNum;
 
-struct MenuItem *menu = NULL;
-struct MenuItem menuTitle;
+Menu *menu = NULL;
 
 SDL_Color Selected = {49, 127, 67, 255};
 SDL_Color Black = {0, 0, 0, 255};
@@ -20,19 +17,22 @@ bool pressed = false;
 char *lastKey = "¬";
 
 // Creates a new menu from a file
-// @param path The path to the menu file
+// @param path The path to the menu file minus the menus/ prefix.
 // @return 0 on success, 1 on failure
 int createMenu(char *path) {
 	// Open a menu file by path
 	char outpath[256];
 	sprintf(outpath, "menus/%s", path); // Format the file to the correct directory
 	FILE *fp = fopen(outpath, "r"); // Open the file
-	menuSize = 0;
 	menuFrom = strdup(currentMenu);
 	currentMenu = strdup(path);
+	menu = malloc(sizeof(Menu)); // Allocate memory for the menu
+	menu->items = malloc(sizeof(MenuItem)); // Allocate memory for the menu items
+	menu->numItems = 0;
+	menu->selected = 0;
 
 	if (!fp) { // If the file doesnt exist
-		printf("Failed to open menu file: %s\n", outpath);
+		printf("Failed to open menu file: menus/%s\n", outpath);
 		return 1;
 	}
 
@@ -41,18 +41,18 @@ int createMenu(char *path) {
 
 	while (fgets(buf, sizeof(buf), fp)) { // While there is a line
 		buf[strcspn(buf, "\n")] = 0;
-		menu = realloc(menu, ++menuSize * sizeof(*menu)); // Increase the size of the menu array
+		menu->items = realloc(menu->items, ++menu->numItems * sizeof(*menu->items)); // Increase the size of the menu array
 		struct MenuItem tmpItem;
 		tmpItem.name = strdup(strtok(buf, ":"));
 		tmpItem.nextmenu = strdup(strtok(NULL, ":"));
 		tmpItem.textInput = false;
 		if (strcmp(tmpItem.name, "UNPAUSABLE") == 0) { // If this menu is unpausable
 			unpausable = true;
-			menuSize--;
+			menu->numItems--;
 			continue;
 		} else if (strcmp(tmpItem.name, "NOT_UNPAUSABLE") == 0) { // If this menu is not unpausable
 			unpausable = false;
-			menuSize--;
+			menu->numItems--;
 			continue;
 		}
 		if (strcmp(tmpItem.nextmenu, "NULL") == 0) { // If the destination is set to have no destination
@@ -60,12 +60,13 @@ int createMenu(char *path) {
 		}
 		if (strcmp(tmpItem.name, "TITLE") == 0) { // If the text found is a title
 			if (found) {
-				printf("Multiple titles found. Existing title: %s\nNew title: %s\nUsing newer title.", menuTitle.nextmenu, tmpItem.nextmenu);
+				printf("Multiple titles found. Existing title: %s\nNew title: %s\nUsing newer title.", menu->menuTitle.nextmenu, tmpItem.nextmenu);
 			}
 			// Revert the changes made
-			menuSize--;
+			menu->numItems--;
 			// Set the title
-			menuTitle = tmpItem;
+			tmpItem.selected = createColouredText(tmpItem.nextmenu, width / 2, 20, titleFont, Black);
+			menu->menuTitle = tmpItem;
 			found = true;
 			continue;
 		} else if (strcmp(tmpItem.nextmenu, "LoadLevel") == 0) { // If the item loads a map
@@ -75,14 +76,16 @@ int createMenu(char *path) {
 			tmpItem.text = '\0';
 			tmpItem.textBuf[0] = '\0';
 		}
-		menu[menuSize - 1] = tmpItem;
+		tmpItem.unselected = createColouredText(tmpItem.name, 20, ((Settings.menuSize + 8) * menu->numItems) + (menu->menuTitle.selected.rect.h + 25), menuFont, Black);
+		tmpItem.selected = createColouredText(tmpItem.name, 20, ((Settings.menuSize + 8) * menu->numItems) + (menu->menuTitle.selected.rect.h + 25), menuFont, Selected);
+		menu->items[menu->numItems - 1] = tmpItem;
 	}
 	if (!found) {
 		// If there is no title text
 		printf("Title for menu not found.\n");
-		menuTitle.nextmenu = "TITLE NOT FOUND";
+		menu->menuTitle.nextmenu = "TITLE NOT FOUND";
 	}
-	selectedMenu = 0;
+	menu->selected = 0;
 	return 0;
 }
 
@@ -92,15 +95,12 @@ void renderMenu() {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-
-	struct Text tmpText;
+	Text tmpText;
 
 	// Render the title
-	tmpText = createColouredText(menuTitle.nextmenu, width / 2, 20, titleFont, Black);
-	tmpText.rect.x -= tmpText.rect.w / 2;
-	SDL_RenderCopy(renderer, tmpText.tex, NULL, &tmpText.rect);
-	int offset = tmpText.rect.h + 20;
-	SDL_DestroyTexture(tmpText.tex);
+	menu->menuTitle.selected.rect.x = width / 2 - menu->menuTitle.selected.rect.w / 2;
+	SDL_RenderCopy(renderer, menu->menuTitle.selected.tex, NULL, &menu->menuTitle.selected.rect);
+	int offset = menu->menuTitle.selected.rect.h + 20;
 
 	// Render the seperation bar
 	SDL_Rect tmpRect;
@@ -110,33 +110,29 @@ void renderMenu() {
 	tmpRect.h = 2;
 	SDL_RenderDrawRect(renderer, &tmpRect);
 
-	for (size_t x = 0; x < menuSize; x++) {
+	for (size_t x = 0; x < menu->numItems; x++) {
 		// Create the text for this screen
-		// NOTE: Could be optimised to have these texts created when the menu is loaded
-		// and store it in the MenuItem struct. I will probably implement that later today.
-		if (x == selectedMenu) {
-			tmpText = createColouredText(menu[x].name, 20, (Settings.menuSize + 8) * (x + 1) + offset, menuFont, Selected);
-		} else {
-			tmpText = createColouredText(menu[x].name, 20, (Settings.menuSize + 8) * (x + 1) + offset, menuFont, Black);
-		}
-		SDL_RenderCopy(renderer, tmpText.tex, NULL, &tmpText.rect);
-		SDL_DestroyTexture(tmpText.tex);
-		if (menu[x].textInput) { // If the text is an input area
+		if (x == menu->selected)
+			SDL_RenderCopy(renderer, menu->items[x].selected.tex, NULL, &menu->items[x].selected.rect);
+		else
+			SDL_RenderCopy(renderer, menu->items[x].unselected.tex, NULL, &menu->items[x].unselected.rect);
+
+		if (menu->items[x].textInput) { // If the text is an input area
 			// Create the text input box
-			tmpRect.x = tmpText.rect.x + tmpText.rect.w + 10;
-			tmpRect.y = tmpText.rect.y - 1;
-			tmpRect.w = width - tmpText.rect.x - tmpText.rect.w - 20;
-			tmpRect.h = tmpText.rect.h + 2;
+			tmpRect.x = menu->items[x].unselected.rect.x + menu->items[x].unselected.rect.w + 10;
+			tmpRect.y = menu->items[x].unselected.rect.y - 1;
+			tmpRect.w = width - menu->items[x].unselected.rect.x - menu->items[x].unselected.rect.w - 20;
+			tmpRect.h = menu->items[x].unselected.rect.h + 2;
 			// Render the box
 			SDL_SetRenderDrawColor(renderer, 127, 127, 127, 255);
 			SDL_RenderDrawRect(renderer, &tmpRect);
-			if (menu[x].text != NULL && strcmp(menu[x].text, "") != 0) { // If there is text in the box
+			if (menu->items[x].text != NULL && strcmp(menu->items[x].text, "") != 0) { // If there is text in the box
 				// Render the text
-				tmpText = createColouredText(menu[x].text, tmpRect.x + 5, tmpRect.y + 1, menuFont, Black);
+				tmpText = createColouredText(menu->items[x].text, tmpRect.x + 5, tmpRect.y + 1, menuFont, Black);
 				SDL_RenderCopy(renderer, tmpText.tex, NULL, &tmpText.rect);
-				SDL_DestroyTexture(tmpText.tex);
+				freeText(tmpText);
 			}
-			if (x == selectedMenu) {
+			if (x == menu->selected) {
 				// Var used to track keyboard inputs
 				inputting = true;
 			}
@@ -149,18 +145,18 @@ void renderMenu() {
 // @return 0 to do nothing, 1 to quit the game, 2 to connect to a server.
 int selectOption() {
 	// Get the menu to go to or whatever else is in that field.
-	char *menuToGo = menu[selectedMenu].nextmenu;
+	char *menuToGo = menu->items[menu->selected].nextmenu;
 	if (strcmp(menuToGo, "ResumeGame") == 0) { // Special command to resume the game
 		paused = false;
 		return 0;
 	} else if (strcmp(menuToGo, "ExitGame") == 0) { // Special command to quit the game
 		return 1;
 	} else if (strcmp(menuToGo, "NULL") == 0) { // If it has no destination
-		printf("%s has no menu destination.\n", menu[selectedMenu].name);
+		printf("%s has no menu destination.\n", menu[menu->selected].name);
 		return 0;
 	} else if (strcmp(menuToGo, "LoadLevel") == 0) { // Special command to load a level instead of a menu
-		if (loadMap(menu[selectedMenu].levelName) != 0) {
-			printf("Failed to load into level: %s\n", menu[selectedMenu].levelName);
+		if (loadMap(menu->items[menu->selected].levelName) != 0) {
+			printf("Failed to load into level: %s\n", menu->items[menu->selected].levelName);
 			return 0;
 		} else {
 			paused = false;
@@ -174,6 +170,14 @@ int selectOption() {
 		return 0;
 	} else if (strcmp(strtok(menuToGo, ","), "ServerConnect") == 0) { // Special command to connect to server
 		return 2;
+	} else if (strcmp(menuToGo, "ApplySettings") == 0) {
+		for (size_t x = 0; x < menu->numItems; x++) {
+			if (strtok(menu->items[x].name, "Multiplayer Name") == 0) {
+				Settings.name = strdup(menu->items[x].text);
+			}
+		}
+		menuToGo = strdup(menuFrom); // Go back a menu
+		printf("Settings saved!\n");
 	}
 	createMenu(menuToGo);
 	return 0;
@@ -186,8 +190,8 @@ void menuInputHandling() {
 		case SDL_TEXTINPUT:
 			// Handle text entering
 			if (inputting && (event.text.text != lastKey) && (strcmp(event.text.text, " ") != 0)) {
-				strcat(menu[selectedMenu].textBuf, event.text.text);
-				menu[selectedMenu].text = strdup(menu[selectedMenu].textBuf);
+				strcat(menu->items[menu->selected].textBuf, event.text.text);
+				menu->items[menu->selected].text = strdup(menu->items[menu->selected].textBuf);
 				lastKey = strdup(event.text.text);
 			}
 			break;
@@ -195,10 +199,10 @@ void menuInputHandling() {
 			switch (event.key.keysym.sym) {
 				// Handle backspace
 				case SDLK_BACKSPACE:
-					if (strlen(menu[selectedMenu].text) != 0)
-						menu[selectedMenu].text[strlen(menu[selectedMenu].text) - 1] = '\0';
-					if (strlen(menu[selectedMenu].textBuf) != 0)
-						menu[selectedMenu].textBuf[strlen(menu[selectedMenu].textBuf) - 1] = '\0';
+					if (strlen(menu->items[menu->selected].text) != 0)
+						menu->items[menu->selected].text[strlen(menu->items[menu->selected].text) - 1] = '\0';
+					if (strlen(menu->items[menu->selected].textBuf) != 0)
+						menu->items[menu->selected].textBuf[strlen(menu->items[menu->selected].textBuf) - 1] = '\0';
 			}
 	}
 }

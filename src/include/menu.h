@@ -5,21 +5,21 @@ typedef struct MenuItem {
 	char *text;
 	char textBuf[512];
 	bool textInput;
-	Text textObj;
+	Text unselected;
+	Text selected;
 } MenuItem;
 
 typedef struct Menu {
 	char *name;
 	MenuItem *items;
 	size_t numItems;
-	int selected;
+	size_t selected;
+	MenuItem menuTitle;
 } Menu;
 
-extern size_t selectedMenu;
-extern size_t menuSize;
 extern size_t inputNum;
 
-extern struct MenuItem *menu;
+extern Menu *menu;
 
 extern SDL_Color Selected;
 extern SDL_Color Black;

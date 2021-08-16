@@ -12,3 +12,4 @@ typedef struct configuration {
 extern configuration Settings;
 
 int loadSettings();
+int saveSettings();

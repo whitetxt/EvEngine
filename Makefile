@@ -7,11 +7,16 @@ files = ${wildcard src/*.c}
 objFiles = ${files:.c=.o}
 
 all:
-	${CC} -o ${filename} ${files} ${CFLAGS} 
+	${CC} -o ${filename} ${files} ${CFLAGS}
 
 clean:
 	-rm -rf ${filename}
 	-rm -rf ${objFiles}
+
+new:
+	-rm -rf ${filename}
+	-rm -rf ${objFiles}
+	${CC} -o ${filename} ${files} ${CFLAGS}
 
 run:
 	${CC} -o ${filename} ${files} ${CFLAGS}

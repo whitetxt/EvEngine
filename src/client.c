@@ -28,8 +28,8 @@ int setupClient() {
 
 	int hostIdx = atoi(strtok(NULL, ","));
 	int portIdx = atoi(strtok(NULL, ","));
-	char *host = menu[hostIdx].text;
-	int port = atoi(menu[portIdx].text);
+	char *host = menu->items[hostIdx].text;
+	int port = atoi(menu->items[portIdx].text);
 
 	if (zed_net_get_address(&server, host, port) != 0) { // Get the server's address
 		printf("Error getting the server address: %s\n", zed_net_get_error());

@@ -38,3 +38,27 @@ int loadSettings() {
 	}
 	return 0;
 }
+
+// Saves settings to "settings.ini"
+// @return 0 on success, 1 on failure
+int saveSettings() {
+	FILE* fp = fopen("settings.ini", "w");
+	if (!fp) {
+		printf("Can't open 'settings.ini'\n");
+		return 1;
+	}
+	fprintf(fp, "[video]\n");
+	fprintf(fp, "width=%d\n", Settings.width);
+	fprintf(fp, "height=%d\n", Settings.height);
+	fprintf(fp, "\n[multiplayer]\n");
+	fprintf(fp, "name=%s\n", Settings.name);
+	fprintf(fp, "playertextsize=%d\n", Settings.playerTextSize);
+	fprintf(fp, "\n[menu]\n");
+	fprintf(fp, "menusize=%d\n", Settings.menuSize);
+	fprintf(fp, "titlesize=%d\n", Settings.titleSize);
+	fprintf(fp, "\n[general]\n");
+	fprintf(fp, "notifsize=%d\n", Settings.notifSize);
+	fprintf(fp, "mainmenusize=%d\n", Settings.mainMenuSize);
+	fclose(fp);
+	return 0;
+}
