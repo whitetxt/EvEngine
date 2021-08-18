@@ -27,7 +27,6 @@ Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, flo
 // Handles player movement
 // @param Player The player to move
 // @param dir The direction to move in (1 = E, 3 = W)
-
 void movePlayer(Player *Player, int dir) {
 	// Function to move the player around. Also handles scrolling.
 	/* 	0 = N
@@ -52,7 +51,6 @@ void movePlayer(Player *Player, int dir) {
 
 // Starts crouch mode.
 // @param Player: The player to start crouch mode on.
-
 void startCrouch(Player *Player) {
 	Player->rect.h = 35;
 	Player->isCrouching = true;
@@ -63,7 +61,6 @@ void startCrouch(Player *Player) {
 
 // Ends crouch mode.
 // @param Player: The player to end crouch mode on.
-
 void endCrouch(Player *Player) {
 	Player->rect.h = 70;
 	Player->rect.y -= 35;
@@ -85,7 +82,6 @@ void endCrouch(Player *Player) {
 
 // Applies gravity to a player.
 // @param Player The player to apply gravity to.
-
 void grav(Player *Player) {
 	// Function to apply accelerating gravity.
 	PrevGrav += 12 * dt;
@@ -99,7 +95,6 @@ void grav(Player *Player) {
 
 // Updates world scroll
 // @param Player The player to center for world scroll.
-
 void updateWorldScroll(Player *Player) {
 	// If the player is at the center and moving to the right:
 	if (Player->rect.x + (Player->rect.w / 2) > width / 2 && m.maxScrollX > worldScrollX + width) {
@@ -139,7 +134,6 @@ void updateWorldScroll(Player *Player) {
 
 // Makes a player jump.
 // @param Player The player to make jump.
-
 void playerJump(Player *Player) {
 	// Simple function that uses gravity to make the player jump.
 	if (Player->onGround) {
@@ -197,7 +191,6 @@ bool checkCollision(SDL_Rect Rect) {
 
 // Handles collision for a player.
 // @param Player The player to handle collisions for.
-
 void playerCollision(Player *Player) {
 	// If the player is too low down, clamp at the bottom.
 	if (Player->rect.y + Player->rect.h > height) {
@@ -278,7 +271,6 @@ void playerCollision(Player *Player) {
 
 // Renders a player.
 // @param Player The player to render.
-
 void renderPlayer(Player *player) {
 	if (player->isCrouching)
 		SDL_RenderCopy(renderer, player->crouchTex, NULL, &player->rect);

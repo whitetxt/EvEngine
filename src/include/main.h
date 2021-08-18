@@ -18,6 +18,7 @@
 #include "client.h"
 #include "menu.h"
 #include "mainMenu.h"
+#include "toast.h"
 
 extern SDL_Texture *playerTexture;
 extern SDL_Texture *playerTextureCrouch;

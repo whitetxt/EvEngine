@@ -15,14 +15,6 @@ static int handler(void* user, const char* section, const char* name, const char
 		pconfig->width = atoi(value);
 	} else if (MATCH("video", "height")) {
 		pconfig->height = atoi(value);
-	} else if (MATCH("menu", "menusize")) {
-		pconfig->menuSize = atoi(value);
-	} else if (MATCH("menu", "titlesize")) {
-		pconfig->titleSize = atoi(value);
-	} else if (MATCH("general", "notifsize")) {
-		pconfig->notifSize = atoi(value);
-	} else if (MATCH("general", "mainmenusize")) {
-		pconfig->mainMenuSize = atoi(value);
 	} else {
 		return 0;  /* unknown section/name, error */
 	}
@@ -53,12 +45,6 @@ int saveSettings() {
 	fprintf(fp, "\n[multiplayer]\n");
 	fprintf(fp, "name=%s\n", Settings.name);
 	fprintf(fp, "playertextsize=%d\n", Settings.playerTextSize);
-	fprintf(fp, "\n[menu]\n");
-	fprintf(fp, "menusize=%d\n", Settings.menuSize);
-	fprintf(fp, "titlesize=%d\n", Settings.titleSize);
-	fprintf(fp, "\n[general]\n");
-	fprintf(fp, "notifsize=%d\n", Settings.notifSize);
-	fprintf(fp, "mainmenusize=%d\n", Settings.mainMenuSize);
 	fclose(fp);
 	return 0;
 }

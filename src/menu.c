@@ -82,8 +82,8 @@ int createMenu(char *path) {
 				strcat(tmpItem.textBuf, Settings.name);
 			}
 		}
-		tmpItem.unselected = createColouredText(tmpItem.name, 20, ((Settings.menuSize + 8) * menu->numItems) + (menu->menuTitle.selected.rect.h + 25), menuFont, Black);
-		tmpItem.selected = createColouredText(tmpItem.name, 20, ((Settings.menuSize + 8) * menu->numItems) + (menu->menuTitle.selected.rect.h + 25), menuFont, Selected);
+		tmpItem.unselected = createColouredText(tmpItem.name, 20, (28 * menu->numItems) + (menu->menuTitle.selected.rect.h + 25), menuFont, Black);
+		tmpItem.selected = createColouredText(tmpItem.name, 20, (28 * menu->numItems) + (menu->menuTitle.selected.rect.h + 25), menuFont, Selected);
 		menu->items[menu->numItems - 1] = tmpItem;
 	}
 	if (!found) {
@@ -184,6 +184,7 @@ int selectOption() {
 		}
 		menuToGo = strdup(menuFrom); // Go back a menu
 		printf("Settings saved!\n");
+		createToast("Settings saved! And I've made this longer now!");
 	}
 	createMenu(menuToGo);
 	return 0;

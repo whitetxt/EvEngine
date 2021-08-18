@@ -159,6 +159,7 @@ int main(int argc, char *argv[]) {
 			}
 			renderMenu();
 		}
+		renderToasts();
 		SDL_RenderPresent(renderer);
 		calculateDT();
 		//calculateFPS();

@@ -3,15 +3,15 @@
 TTF_Font *menuFont;
 TTF_Font *playerFont;
 TTF_Font *titleFont;
-TTF_Font *notifFont;
+TTF_Font *toastFont;
 TTF_Font *mainMenuFont;
 
 void initFonts() {
-	menuFont = TTF_OpenFont("fonts/aller.ttf", Settings.menuSize);
+	menuFont = TTF_OpenFont("fonts/aller.ttf", 20);
 	playerFont = TTF_OpenFont("fonts/aller.ttf", Settings.playerTextSize);
-	titleFont = TTF_OpenFont("fonts/aller.ttf", Settings.titleSize);
-	notifFont = TTF_OpenFont("fonts/aller.ttf", Settings.notifSize);
-	mainMenuFont = TTF_OpenFont("fonts/aller.ttf", Settings.mainMenuSize);
+	titleFont = TTF_OpenFont("fonts/aller.ttf", 32);
+	toastFont = TTF_OpenFont("fonts/aller.ttf", 16);
+	mainMenuFont = TTF_OpenFont("fonts/aller.ttf", 46);
 }
 
 // Creates a text object for the given text, font and position.
@@ -93,6 +93,13 @@ Text createColouredText(char *text, int x, int y, TTF_Font *Font, SDL_Color Colo
 		tmpText.tex = tmpTex;
 	}
 	return tmpText;
+}
+
+// Draws text to the screen
+// @param text The text to be displayed.
+void renderText(Text text) {
+	// Draws the text to the screen.
+	SDL_RenderCopy(renderer, text.tex, NULL, &text.rect);
 }
 
 // Frees a text object.
