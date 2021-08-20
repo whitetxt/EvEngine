@@ -136,6 +136,7 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 				connectToServer();
+				SDL_Delay(500);
 
 				// Recieves info from the server and parses it
 
