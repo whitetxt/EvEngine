@@ -10,7 +10,7 @@ typedef struct Player {
 	int dir;
 } Player;
 
-extern int64_t worldScrollX;
+extern uint16_t worldScrollX;
 
 struct Player createPlayer(char *fp, char *crouchfp, int x, int y, float normSpeed, float crouchSpeed);
 

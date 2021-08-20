@@ -31,6 +31,8 @@ int initWindow() {
 		SDL_Quit();
 		return 1;
 	}
+
+	SDL_SetWindowIcon(win, IMG_Load("textures/EvEngine.png"));
 	
 	printf("Initialised Window.\n");
 

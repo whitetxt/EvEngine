@@ -25,6 +25,8 @@ size_t interactableSize;
 size_t textArrSize = 0;
 struct Text *textArr = NULL;
 
+SDL_Thread *getUpdate;
+
 bool onServer = false;
 
 void render() {
@@ -98,10 +100,7 @@ int main(int argc, char *argv[]) {
 	SDL_StartTextInput();
 
 	// Create the player
-	MainPlayer = createPlayer("Player.png", "PlayerCrouch.png", 0, 0, 100, 40);
-
-	SDL_Thread *getUpdate;
-	SDL_Thread *alive;
+	MainPlayer = createPlayer("textures/Player.png", "textures/PlayerCrouch.png", 0, 0, 100, 40);
 
 	if (mainMenu() == -1) {
 		playing = false;
@@ -114,7 +113,7 @@ int main(int argc, char *argv[]) {
 	// Main event loop.
 	while (playing) {
 		if (!paused) {
-			// EventHandling returns 1 when it wants to quit the game.
+			// eventHandling returns 1 when it wants to quit the game.
 			if (eventHandling(&MainPlayer) == 1) {
 				break;
 			}
@@ -123,7 +122,7 @@ int main(int argc, char *argv[]) {
 			playerCollision(&MainPlayer);
 			updateWorldScroll(&MainPlayer);
 			if (onServer) { // If multiplayer
-				sendPos();
+				movePacket();
 				updateMultiplayerNames();
 			}
 			render();
@@ -140,19 +139,9 @@ int main(int argc, char *argv[]) {
 
 				// Recieves info from the server and parses it
 
-				playerTexture = loadImage(renderer, "OtherPlayer.png");
-				playerTextureCrouch = loadImage(renderer, "OtherPlayerCrouch.png");
+				playerTexture = loadImage(renderer, "textures/OtherPlayer.png");
+				playerTextureCrouch = loadImage(renderer, "textures/OtherPlayerCrouch.png");
 
-				getUpdate = SDL_CreateThread(getUpdates, "updateThread", NULL);
-				if (!getUpdate) {
-					printf("Failed to start the update thread: %s\n", SDL_GetError());
-					break;
-				}
-				alive = SDL_CreateThread(stayAlive, "aliveThread", NULL);
-				if (!alive) {
-					printf("Failed to start the alive thread: %s\n", SDL_GetError());
-					break;
-				}
 				loadMap("levels/level1.map");
 				onServer = true;
 				paused = false;
@@ -169,12 +158,12 @@ int main(int argc, char *argv[]) {
 		printf("Disconnecting.\n");
 
 		// Disconnect message kills all the threads
-		sendMsg("DC");
+		disconnectPacket("Game shutting down");
 
 		int returnVal;
 		// Wait for threads to return
+		playing = false;
 		SDL_WaitThread(getUpdate, &returnVal);
-		SDL_WaitThread(alive, &returnVal);
 		printf("Disconnected.\n");
 		zed_net_shutdown();
 	}

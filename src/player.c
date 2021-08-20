@@ -2,7 +2,7 @@
 
 double PrevGrav = 0;
 int BaseGrav = 0;
-int64_t worldScrollX = 0;
+uint16_t worldScrollX = 0;
 double PlayerAccel = 0;
 
 // Creates a player object
@@ -56,7 +56,7 @@ void startCrouch(Player *Player) {
 	Player->isCrouching = true;
 	Player->rect.y += 35;
 	if (onServer)
-		sendMsg("SCR");
+		crouchPacket(Player->isCrouching);
 }
 
 // Ends crouch mode.
@@ -77,7 +77,7 @@ void endCrouch(Player *Player) {
 	}
 	Player->isCrouching = false;
 	if (onServer)
-		sendMsg("ECR");
+		crouchPacket(Player->isCrouching);
 }
 
 // Applies gravity to a player.
@@ -116,10 +116,12 @@ void updateWorldScroll(Player *Player) {
 	// If the player is at the center, not at the left edge and moving to the left:
 	if (worldScrollX != 0 && Player->rect.x + (Player->rect.w / 2) < width / 2) {
 		// Change the world scroll.
-		worldScrollX = worldScrollX - abs(width / 2 - (Player->rect.x + Player->rect.w/2));
-		// Lock the world scroll at the left edge.
-		if (worldScrollX < 0)
+		if (abs(width / 2 - (Player->rect.x + Player->rect.w/2)) > worldScrollX) {
 			worldScrollX = 0;
+		} else {
+			worldScrollX = worldScrollX - abs(width / 2 - (Player->rect.x + Player->rect.w/2));
+		}
+		// Lock the world scroll at the left edge.
 		// Lock the player at the center.
 		Player->rect.x = (width / 2) - (Player->rect.w / 2);
 		// Update positions of all the tiles.

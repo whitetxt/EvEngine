@@ -10,7 +10,7 @@ int animTimer = 0;
 // @return true on success, false on failure.
 bool createToast(char *text) {
 	if (!toastBack) {
-		toastBack = loadImage(renderer, "assets/toastBack.png");
+		toastBack = loadImage(renderer, "textures/toastBack.png");
 	}
 	Toast toast;
 	toast.text = strdup(text);

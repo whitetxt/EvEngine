@@ -24,11 +24,12 @@ typedef struct InteractableSerialisation {
 } InteractableSerialisation;
 
 typedef struct OtherPlayer {
-	char *ID;
+	uint16_t ID;
 	char *name;
 	bool crouching;
 	SDL_Rect rect;
 	SDL_Rect worldRect;
+	Text nameTag;
 } OtherPlayer;
 
 SDL_Rect createRect(SDL_Texture *tex, int x, int y);
